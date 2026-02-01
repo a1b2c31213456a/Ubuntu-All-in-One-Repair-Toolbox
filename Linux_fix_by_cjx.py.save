@@ -1,0 +1,256 @@
+import os
+import sys
+
+
+def install_ssh():
+    """安装并配置SSH服务"""
+    os.system('clear')
+    print("正在更新软件包列表...")
+    result = os.system('sudo apt-get update')
+    if result != 0:
+        print("警告: 软件包列表更新失败")
+
+    print("正在安装OpenSSH服务器...")
+    result = os.system('sudo apt-get install -y openssh-server')
+    if result != 0:
+        print("错误: OpenSSH服务器安装失败")
+        return
+
+    print("正在启动SSH服务...")
+    os.system('sudo systemctl start ssh')
+
+    print("正在设置SSH服务开机自启...")
+    os.system('sudo systemctl enable ssh')
+
+    print("SSH服务已成功安装并启用。")
+    print("可以通过以下命令连接到此Ubuntu系统:")
+    print("ssh username@your_ubuntu_ip")
+
+
+def set_root_password():
+    """设置root用户密码"""
+    os.system('sudo clear')
+    print("正在设置root用户密码...")
+    result = os.system('sudo passwd root')
+    if result == 0:
+        print("root密码设置完成!")
+    else:
+        print("root密码设置失败!")
+
+
+def install_xorg():
+    """安装Xorg桌面环境"""
+    os.system('clear')
+    print("正在安装Xorg...")
+    result = os.system('sudo apt-get update')
+    if result != 0:
+        print("警告: 软件包列表更新失败")
+
+    result = os.system('sudo apt-get install -y xorg')
+    if result == 0:
+        print("Xorg安装完成! 请手动安装窗口管理器(如openbox)以获得完整桌面体验")
+    else:
+        print("Xorg安装失败!")
+
+
+def install_chinese_language():
+    """安装中文语言包"""
+    os.system('sudo clear')
+    print("正在安装中文语言包...")
+    result = os.system('sudo apt-get update')
+    if result != 0:
+        print("警告: 软件包列表更新失败")
+
+    result = os.system('sudo apt-get install -y language-pack-zh-hans')
+    if result != 0:
+        print("错误: 中文语言包安装失败")
+        return
+
+    result = os.system('sudo locale-gen zh_CN.UTF-8')
+    if result == 0:
+        try:
+            print('正在设置中文语言环境...')
+            os.system('sudo update-locale LANG=zh_CN.UTF-8')
+            os.system('sudo timedatectl set-locale LANG=zh_CN.UTF-8')
+            # 使用shell命令设置环境变量
+            os.system('echo "export LANG=zh_CN.UTF-8" >> ~/.bashrc')
+            os.system('echo "export LANGUAGE=zh_CN:zh" >> ~/.bashrc')
+            os.system('echo "export LC_ALL=zh_CN.UTF-8" >> ~/.bashrc')
+            os.system('source ~/.bashrc')
+            print('中文语言包设置完成！！！')
+            print('若系统语言未更换成中文请重新登录或执行 source ~/.bashrc 来应用更改')
+        except Exception as e:
+            print(f'设置过程中出现错误: {e}')
+    else:
+        print("locale生成失败!")
+
+
+def install_chinese_input_method():
+    """安装中文输入法"""
+    os.system('clear')
+    print("正在安装中文输入法...")
+    print("请选择输入法类型:")
+    print("1) Fcitx框架 + Google拼音输入法")
+    print("2) Fcitx框架 + Sunpinyin输入法")
+    print("3) IBus框架 + Google拼音输入法")
+
+    try:
+        choice = input("请输入选择(1-3, 默认1): ").strip()
+        if not choice:
+            choice = '1'
+
+        if choice == '1':
+            # 安装Fcitx + Google拼音
+            cmds = [
+                'sudo apt-get update',
+                'sudo apt-get install -y fcitx-googlepinyin fcitx-configtool im-config',
+                'im-config -n fcitx'
+            ]
+            names = ["更新软件包列表", "安装Fcitx和Google拼音", "配置输入法框架"]
+        elif choice == '2':
+            # 安装Fcitx + Sunpinyin
+            cmds = [
+                'sudo apt-get update',
+                'sudo apt-get install -y fcitx-sunpinyin fcitx-configtool im-config',
+                'im-config -n fcitx'
+            ]
+            names = ["更新软件包列表", "安装Fcitx和Sunpinyin", "配置输入法框架"]
+        elif choice == '3':
+            # 安装IBus + Google拼音
+            cmds = [
+                'sudo apt-get update',
+                'sudo apt-get install -y ibus-googlepinyin ibus-setup im-config',
+                'im-config -n ibus'
+            ]
+            names = ["更新软件包列表", "安装IBus和Google拼音", "配置输入法框架"]
+        else:
+            print("无效选择，安装Fcitx + Google拼音")
+            cmds = [
+                'sudo apt-get update',
+                'sudo apt-get install -y fcitx-googlepinyin fcitx-configtool im-config',
+                'im-config -n fcitx'
+            ]
+            names = ["更新软件包列表", "安装Fcitx和Google拼音", "配置输入法框架"]
+
+        for i, cmd in enumerate(cmds):
+            print(f"正在{names[i]}...")
+            result = os.system(cmd)
+            if result != 0:
+                if i == 0:  # 更新失败可以继续
+                    print("警告: 软件包列表更新失败，继续安装")
+                else:
+                    print(f"错误: {names[i]}失败")
+                    return
+
+        print("中文输入法安装完成!")
+        print("请注销并重新登录以启用输入法")
+        print("使用Ctrl+Space切换输入法")
+
+    except KeyboardInterrupt:
+        print("\n安装被用户取消")
+    except Exception as e:
+        print(f"安装过程中发生错误: {e}")
+def Lcmd():
+    os.system('clear')
+    print('*'*50)
+    print('欢迎使用由陈俊旭开发的Python版Linux控制台！！！')
+    print('注意⚠ :如果您要退出控制台，请输入命令 Linuxshell_exit() ')
+    print('='*50)
+    while True:
+        lscmd=input('\n请输入Linux Shell代码:')
+        if lscmd == 'Linuxshell_exit()':
+            return
+        elif lscmd == 'clear':
+            os.system(lscmd)
+            print('*' * 50)
+            print('欢迎使用由陈俊旭开发的Python版Linux控制台！！！')
+            print('注意⚠ :如果您要退出控制台，请输入命令 Linuxshell_exit() ')
+            print('=' * 50)
+        elif lscmd == 'bash':
+            print('本控制台无法使用bash命令！！！换个命令试试吧！')
+	elif lscmd == '^[[A':
+	    
+        else:
+            os.system(lscmd)
+
+def show_menu():
+    """显示主菜单"""
+    os.system('clear')
+    print('\n' + '=' * 50)
+    print('欢迎使用Ubuntu常用快捷命令控制台！')
+    print('=' * 50)
+    print('1) 开启并安装SSH服务')
+    print('2) 设置root密码(需先安装sudo命令，如果已安装则跳过)')
+    print('3) 安装xorg桌面(不建议纯命令行无任何桌面环境和登陆环境的用户使用！)')
+    print('4) 安装中文语言(不带输入法！)')
+    print('5) 安装中文输入法')
+    print('6) 版本信息')
+    print('7) 进入Ubuntu桌面专用修复子程序(建议纯命令行无任何桌面环境和登陆环境的用户使用！)')
+    print('8) 进入Linux控制台，Python制作')
+    print('9) 更新软件源')
+    print('0) 退出程序')
+    print('=' * 50)
+
+
+def banben_by():
+    """显示版本信息"""
+    os.system('clear')
+    print('程序版本:version 0.1.1')
+    print('⚠ 注意:本程序版本非正式版，所以本版本程序可能出现BUG，敬请期待后续正式版本！！！')
+    print('陈俊旭 出品')
+
+
+def main():
+    """主程序入口"""
+    # 检查是否在Linux系统上运行
+    os.system('clear')
+    if os.name != 'posix':
+        print("警告: 此工具专为Ubuntu Linux设计，可能无法在当前系统正常工作")
+        response = input("是否继续运行? (y/N): ").strip().lower()
+        if response not in ['y', 'yes']:
+            print("程序已退出")
+            return
+
+    while True:
+        show_menu()
+        try:
+            choice = input('请输入命令号码(0-9): ').strip()
+
+            if choice == '0':
+                os.system('clear')
+                print("感谢使用，再见！")
+                break
+            elif choice == '1':
+                install_ssh()
+            elif choice == '2':
+                set_root_password()
+            elif choice == '3':
+                install_xorg()
+            elif choice == '4':
+                install_chinese_language()
+            elif choice == '5':
+                install_chinese_input_method()
+            elif choice == '6':
+                banben_by()
+            elif choice == '7':
+                os.system('sudo python3 Linux_fix_by_cjx_zichengxu1.py')
+            elif choice == '8':
+                Lcmd()
+            elif choice == '9':
+                os.system('cd linuxmirrors.cn && chmod +x main.sh && ./main.sh ')
+            else:
+                print("无效选项，请输入0-9之间的数字！")
+
+            input("\n按回车键继续...")
+
+        except KeyboardInterrupt:
+            os.system('clear')
+            print("\n\n程序被用户中断，再见！")
+            break
+        except Exception as e:
+            print(f"发生错误: {e}")
+            input("按回车键继续...")
+
+
+if __name__ == "__main__":
+    main()
